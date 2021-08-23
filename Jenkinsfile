@@ -20,13 +20,13 @@ pipeline{
             }
         }
         
-        stage('Docker Build'){
+        stage('Container Build'){
             steps{
                 sh "docker build . -t rjedgemon/xyz_ltd:${DOCKER_TAG} "
             }
         }
         
-        stage('DockerHub Push'){
+        stage('Container Push'){
             steps{
                 withCredentials([string(credentialsId: 'docker-hub', variable: 'dockerHubPwd')]) {
                     sh "docker login -u rjedgemon -p ${dockerHubPwd}"
@@ -36,7 +36,7 @@ pipeline{
             }
         }
         
-        stage('Docker Deploy'){
+        stage('Container Deploy'){
             steps{
               ansiblePlaybook credentialsId: 'dev-server', disableHostKeyChecking: true, extras: "-e DOCKER_TAG=${DOCKER_TAG}", installation: 'ansible', inventory: 'dev.inv', playbook: 'deploy-docker.yml'
             }
